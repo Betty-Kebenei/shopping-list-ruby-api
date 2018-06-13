@@ -103,75 +103,74 @@ RSpec.describe "ShoppingList API", type: :request do
                 expect(response).to have_http_status(409)
             end
         end
+    end
 
-        describe "PUT /shopping_lists/:id" do
-            
-            context "with valid data" do
-                let(:data) { { title: 'Fruits' } }
-                before { put "/shopping_lists/#{shopping_list_id}", params: data }
+    describe "PUT /shopping_lists/:id" do
+        
+        context "with valid data" do
+            let(:data) { { title: 'Fruits' } }
+            before { put "/shopping_lists/#{shopping_list_id}", params: data }
 
-                it "updates a shopping_list if exists" do
-                    expect(json["title"]).to eq("Fruits")
-                    expect(response).to have_http_status(200)
-                end
-            end
-
-            context "when update is done with duplication" do
-                let(:first_data) { { title: "Food stuffs", created_by: "1" } }
-                before { post "/shopping_lists", params: first_data }
-
-                let(:second_data) { { title: "House stuffs", created_by: "1" } }
-                before { post "/shopping_lists", params: second_data }
-
-                let(:update_data) { { title: "Food stuffs" } }
-                let(:shopping_list_id) { 2 }
-                before { put "/shopping_lists/#{shopping_list_id}", params: update_data }
-
-                it "returns an error that a shopping list with that title of an already" do
-                    expect(response.body).to match(/Validation failed: duplicate data/)
-                    expect(response).to have_http_status(409)
-                end
-            end
-
-            context "length of the title is less than 3" do
-                let(:data) { { title: "Fo" } }
-                before { put "/shopping_lists/#{shopping_list_id}", params: data }
-    
-                it "returns an error stating minimum length with 409 status " do
-                    expect(response.body).to match(/Validation failed: Minimum length should be 3/)
-                    expect(response).to have_http_status(409)
-                end
-            end
-    
-            context "title is just made up of integers and no letters" do
-                let(:data) { { title: "1111" } }
-                before { put "/shopping_lists/#{shopping_list_id}", params: data }
-    
-                it "returns an error stating valid format with 409 status " do
-                    expect(response.body).to match(/Validation failed: A title must have atleast one letter/)
-                    expect(response).to have_http_status(409)
-                end
+            it "updates a shopping_list if exists" do
+                expect(json["title"]).to eq("Fruits")
+                expect(response).to have_http_status(200)
             end
         end
 
-        describe "DELETE /shopping_lists/:id" do
+        context "when update is done with duplication" do
+            let(:first_data) { { title: "Food stuffs", created_by: "1" } }
+            before { post "/shopping_lists", params: first_data }
 
-            context "when deleting an existing shopping list" do
-                before { delete "/shopping_lists/#{shopping_list_id}" }
-                it "deletes successfully" do
-                    expect(response).to have_http_status(204)
-                end
+            let(:second_data) { { title: "House stuffs", created_by: "1" } }
+            before { post "/shopping_lists", params: second_data }
+
+            let(:update_data) { { title: "Food stuffs" } }
+            let(:shopping_list_id) { 2 }
+            before { put "/shopping_lists/#{shopping_list_id}", params: update_data }
+
+            it "returns an error that a shopping list with that title of an already" do
+                expect(response.body).to match(/Validation failed: duplicate data/)
+                expect(response).to have_http_status(409)
             end
+        end
 
-            context "when deleting an existing shopping list" do
-                let(:shopping_list_id) { 20 }
-                before { delete "/shopping_lists/#{shopping_list_id}" }
-                it "returns an error" do
-                    expect(response.body).to match(/No list to delete/)
-                    expect(response).to have_http_status(404)
-                end
+        context "length of the title is less than 3" do
+            let(:data) { { title: "Fo" } }
+            before { put "/shopping_lists/#{shopping_list_id}", params: data }
+
+            it "returns an error stating minimum length with 409 status " do
+                expect(response.body).to match(/Validation failed: Minimum length should be 3/)
+                expect(response).to have_http_status(409)
             end
+        end
 
+        context "title is just made up of integers and no letters" do
+            let(:data) { { title: "1111" } }
+            before { put "/shopping_lists/#{shopping_list_id}", params: data }
+
+            it "returns an error stating valid format with 409 status " do
+                expect(response.body).to match(/Validation failed: A title must have atleast one letter/)
+                expect(response).to have_http_status(409)
+            end
+        end
+    end
+
+    describe "DELETE /shopping_lists/:id" do
+
+        context "when deleting an existing shopping list" do
+            before { delete "/shopping_lists/#{shopping_list_id}" }
+            it "deletes successfully" do
+                expect(response).to have_http_status(204)
+            end
+        end
+
+        context "when deleting an existing shopping list" do
+            let(:shopping_list_id) { 20 }
+            before { delete "/shopping_lists/#{shopping_list_id}" }
+            it "returns an error" do
+                expect(response.body).to match(/No list to delete/)
+                expect(response).to have_http_status(404)
+            end
         end
 
     end
