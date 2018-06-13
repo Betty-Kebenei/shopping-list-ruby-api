@@ -8,7 +8,7 @@ RSpec.describe "ShoppingList API", type: :request do
         before { get "/shopping_lists" }
 
         it "returns shopping_lists" do
-            expect(json).not_to_be_empty
+            expect(json).not_to be_empty
             expect(json.size).to eq(10)
             expect(response).to have_http_status(200)
         end
@@ -18,7 +18,7 @@ RSpec.describe "ShoppingList API", type: :request do
         before { get "/shopping_lists/#{shopping_list_id}" }
 
         it "returns a shopping_list if exists" do
-            expect(json).not_to_be_empty
+            expect(json).not_to be_empty
             expect(json.size).to eq(1)
             expect(response).to have_http_status(200)
         end
@@ -37,7 +37,7 @@ RSpec.describe "ShoppingList API", type: :request do
             before { post "/shopping_lists", params: data }
 
             it "creates a shopping_list" do
-                expect(json).not_to_be_empty
+                expect(json).not_to be_empty
                 expect(json["title"]).to eq("Food stuffs")
                 expect(json["created_by"]).to eq("1")
                 expect(response).to have_http_status(201)
@@ -69,7 +69,7 @@ RSpec.describe "ShoppingList API", type: :request do
             before { post "/shopping_lists", params: data }
 
             it "creates a shopping_list" do
-                expect(json).not_to_be_empty
+                expect(json).not_to be_empty
                 expect(json["title"]).to eq("Food stuffs")
                 expect(json["created_by"]).to eq("1")
                 expect(response).to have_http_status(201)
