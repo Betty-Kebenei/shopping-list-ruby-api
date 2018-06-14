@@ -40,8 +40,8 @@ RSpec.describe "ShoppingList API", type: :request do
 
             it "creates a shopping_list" do
                 expect(json).not_to be_empty
-                expect(json["title"]).to eq("Food stuffs")
-                expect(json["created_by"]).to eq("1")
+                expect(json["shopping_list"]["title"]).to eq("Food stuffs")
+                expect(json["shopping_list"]["created_by"]).to eq("1")
                 expect(response).to have_http_status(201)
             end
         end
@@ -51,8 +51,8 @@ RSpec.describe "ShoppingList API", type: :request do
             before { post "/shopping_lists", params: data }
 
             it "fails creating a shopping_list without a title " do
-                expect(response.body).to match(/Validation failed: Title can"t be blank/)
-                expect(response).to have_http_status(400)
+                expect(json["title"]).to include(/can't be blank/)
+                expect(response).to have_http_status(422)
             end
         end
 
@@ -61,8 +61,8 @@ RSpec.describe "ShoppingList API", type: :request do
             before { post "/shopping_lists", params: data }
 
             it "fails creating a shopping_list without a created_by " do
-                expect(response.body).to match(/Validation failed: Created by can"t be blank/)
-                expect(response).to have_http_status(400)
+                expect(json["created_by"]).to include(/can't be blank/)
+                expect(response).to have_http_status(422)
             end
         end
 
@@ -70,19 +70,12 @@ RSpec.describe "ShoppingList API", type: :request do
             let(:data) { { title: "Food stuffs", created_by: "1" } }
             before { post "/shopping_lists", params: data }
 
-            it "creates a shopping_list" do
-                expect(json).not_to be_empty
-                expect(json["title"]).to eq("Food stuffs")
-                expect(json["created_by"]).to eq("1")
-                expect(response).to have_http_status(201)
-            end
-
             let(:data) { { title: "Food stuffs", created_by: "1" } }
             before { post "/shopping_lists", params: data }
 
             it "returns duplication error message" do
-                expect(response.body).to match(/Validation failed: No duplicates allowed/)
-                expect(response).to have_http_status(409)
+                expect(json["title"]).to include(/That title is already taken!/)
+                expect(response).to have_http_status(422)
             end
         end
 
@@ -91,20 +84,11 @@ RSpec.describe "ShoppingList API", type: :request do
             before { post "/shopping_lists", params: data }
 
             it "returns an error stating minimum length with 409 status " do
-                expect(response.body).to match(/Validation failed: Minimum length should be 3/)
-                expect(response).to have_http_status(409)
+                expect(json["title"]).to include(/is too short/)
+                expect(response).to have_http_status(422)
             end
         end
 
-        context "title is just made up of integers and no letters" do
-            let(:data) { { title: "1111", created_by: "1" } }
-            before { post "/shopping_lists", params: data }
-
-            it "returns an error stating valid format with 409 status " do
-                expect(response.body).to match(/Validation failed: A title must have atleast one letter/)
-                expect(response).to have_http_status(409)
-            end
-        end
     end
 
     describe "PUT /shopping_lists/:id" do
