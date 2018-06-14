@@ -16,4 +16,22 @@ class ShoppingListsController < ApplicationController
         render response
     end
 
+    def create 
+        @shopping_list = ShoppingList.create(shopping_list_params)
+
+        response = if @shopping_list.valid?
+            { status: :created , json: { shopping_list: @shopping_list }.to_json }
+        else
+            { status: :unprocessable_entity , json: @shopping_list.errors.messages.to_json }
+        end
+
+        render response
+
+    end
+
+    private
+    def shopping_list_params
+        params.permit(:title, :created_by)
+    end
+
 end
