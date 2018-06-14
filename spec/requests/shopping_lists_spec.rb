@@ -17,16 +17,18 @@ RSpec.describe "ShoppingList API", type: :request do
     describe "GET /shopping_lists/:id" do
         before { get "/shopping_lists/#{shopping_list_id}" }
 
-        it "returns a shopping_list if exists" do
-            expect(json).not_to be_empty
-            expect(json.size).to eq(1)
-            expect(response).to have_http_status(200)
+        context "when shopping_list exists" do
+            it "returns a shopping_list if exists" do
+                expect(json).not_to be_empty
+                expect(response).to have_http_status(200)
+            end
         end
 
-        it "returns no shopping_list if it does not exists" do
+        context "when does not shopping_list exist" do
             let(:shopping_list_id) { 20 }
-            expect(json.size).to eq(0)
-            expect(response).to have_http_status(404)
+            it "returns no shopping_list if it does not exists" do
+                expect(response).to have_http_status(404)
+            end
         end
     end
 
