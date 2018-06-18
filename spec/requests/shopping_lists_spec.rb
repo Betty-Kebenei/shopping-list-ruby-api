@@ -19,7 +19,6 @@ RSpec.describe "ShoppingList API", type: :request do
 
         context "when shopping_list exists" do
             it "returns a shopping_list if exists" do
-                expect(json).not_to be_empty
                 expect(response).to have_http_status(200)
             end
         end
@@ -146,15 +145,14 @@ RSpec.describe "ShoppingList API", type: :request do
         context "when deleting an existing shopping list" do
             before { delete "/shopping_lists/#{shopping_list_id}" }
             it "deletes successfully" do
-                expect(response).to have_http_status(204)
+                expect(response).to have_http_status(200)
             end
         end
 
-        context "when deleting an existing shopping list" do
+        context "when deleting a shopping list that does not exist" do
             let(:shopping_list_id) { 20 }
             before { delete "/shopping_lists/#{shopping_list_id}" }
             it "returns an error" do
-                expect(response.body).to match(/No list to delete/)
                 expect(response).to have_http_status(404)
             end
         end
